@@ -4,17 +4,17 @@
   --color-white: #ffffff;
   --color-black: #000000;
 
-  --color-primary-50: #f0fdf4;
-  --color-primary-100: #dcfce7;
-  --color-primary-200: #bbf7d0;
-  --color-primary-300: #86efac;
-  --color-primary-400: #4ade80;
-  --color-primary-500: #22c55e;
-  --color-primary-600: #16a34a;
-  --color-primary-700: #15803d;
-  --color-primary-800: #166534;
-  --color-primary-900: #14532d;
-  --color-primary-950: #052e16;
+  --color-primary-50: #F4F6EF;
+  --color-primary-100: #E8ECD9;
+  --color-primary-200: #D1D9B3;
+  --color-primary-300: #BAC68D;
+  --color-primary-400: #A3B367;
+  --color-primary-500: #556B2F;
+  --color-primary-600: #4A5D29;
+  --color-primary-700: #3F4F23;
+  --color-primary-800: #3A4A1F;
+  --color-primary-900: #2F3A19;
+  --color-primary-950: #1F2610;
 
   --color-secondary-50: #fff7ed;
   --color-secondary-100: #ffedd5;
@@ -71,7 +71,7 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background-color: rgb(250 250 250);
+    background-color: #F4F6EF;
     color: rgb(23 23 23);
   }
 
@@ -93,5 +93,22 @@
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+}
+
+/* Ripple effect for buttons */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(0);
+  animation: ripple-animation 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
   }
 }

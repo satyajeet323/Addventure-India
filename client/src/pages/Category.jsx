@@ -23,14 +23,14 @@ function Category() {
     )
   }
 
-  const categoryProducts = products[category.id] || []
+  const categoryProducts = products[category.slug] || []
 
   return (
     <>
       <SEO
-        title={category.seo.title}
-        description={category.seo.description}
-        keywords={category.seo.keywords}
+        title={`${category.name} | ${siteConfig.name}`}
+        description={category.description}
+        keywords={`${category.name}, outdoor gear, adventure equipment`}
         image={category.image}
         url={`${siteConfig.url}/${category.slug}`}
       />

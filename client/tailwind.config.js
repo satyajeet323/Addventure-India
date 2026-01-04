@@ -7,19 +7,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary brand colors - Adventure India
+        // Primary brand colors - Olive Green Theme
         primary: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e', // Main primary
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
-          950: '#052e16',
+          50: '#F4F6EF',
+          100: '#E8ECD9',
+          200: '#D1D9B3',
+          300: '#BAC68D',
+          400: '#A3B367',
+          500: '#556B2F', // Main primary olive green
+          600: '#4A5D29',
+          700: '#3F4F23',
+          800: '#3A4A1F', // Dark olive
+          900: '#2F3A19',
+          950: '#1F2610',
         },
         // Secondary accent colors
         secondary: {

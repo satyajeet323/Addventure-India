@@ -1,115 +1,188 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { categories } from '../config/data'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Menu, X } from 'lucide-react'
+import { navLinks, megaMenuItems } from '../config/data'
+import MegaMenu from './MegaMenu'
 
 function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [openMobileMenu, setOpenMobileMenu] = useState(null)
   const location = useLocation()
 
-  const isActive = (path) => location.pathname === path
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const isActive = (slug) => location.pathname === `/${slug}`
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white border-b border-neutral-200 shadow-soft">
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled
+          ? 'bg-white/80 backdrop-blur-md shadow-lg border-b border-primary-200'
+          : 'bg-white border-b border-primary-100'
+      }`}
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link
             to="/"
-            className="flex-shrink-0 flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md"
+            className="flex-shrink-0 flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md group"
             aria-label="Adventure India Home"
           >
-            <span className="text-2xl lg:text-3xl font-display font-bold text-primary-600">
-              Adventure India
-            </span>
+           
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex lg:items-center lg:space-x-8">
-            <Link
-              to="/"
-              className={`px-3 py-2 text-base font-medium transition-colors duration-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
-                isActive('/')
-                  ? 'text-primary-600 bg-primary-50'
-                  : 'text-neutral-700 hover:text-primary-600 hover:bg-neutral-50'
-              }`}
-            >
-              Home
-            </Link>
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                to={`/${category.slug}`}
-                className={`px-3 py-2 text-base font-medium transition-colors duration-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
-                  isActive(`/${category.slug}`)
-                    ? 'text-primary-600 bg-primary-50'
-                    : 'text-neutral-700 hover:text-primary-600 hover:bg-neutral-50'
-                }`}
-              >
-                {category.name}
-              </Link>
-            ))}
+          <div className="hidden xl:flex xl:items-center xl:space-x-1 relative z-50">
+            {navLinks.map((link, index) => {
+              const dropdownItems = megaMenuItems[link.slug] || []
+              return (
+                <motion.div
+                  key={link.id}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="relative"
+                >
+                  <MegaMenu
+                    items={dropdownItems}
+                    label={link.name}
+                    slug={link.slug}
+                    isMobile={false}
+                  />
+                </motion.div>
+              )
+            })}
           </div>
 
           {/* Mobile menu button */}
           <button
             type="button"
-            className="lg:hidden p-2 rounded-md text-neutral-700 hover:text-primary-600 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200"
+            className="xl:hidden p-2 rounded-md text-neutral-700 hover:text-primary-600 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200"
             aria-label="Toggle menu"
             aria-expanded={isMenuOpen}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              {isMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
 
         {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-neutral-200">
-            <div className="flex flex-col space-y-2">
-              <Link
-                to="/"
-                className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
-                  isActive('/')
-                    ? 'text-primary-600 bg-primary-50'
-                    : 'text-neutral-700 hover:text-primary-600 hover:bg-neutral-50'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
-              {categories.map((category) => (
-                <Link
-                  key={category.id}
-                  to={`/${category.slug}`}
-                  className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
-                    isActive(`/${category.slug}`)
-                      ? 'text-primary-600 bg-primary-50'
-                      : 'text-neutral-700 hover:text-primary-600 hover:bg-neutral-50'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {category.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="xl:hidden overflow-hidden"
+            >
+              <div className="py-4 border-t border-primary-200">
+                <div className="flex flex-col space-y-1">
+                  {navLinks.map((link, index) => {
+                    const dropdownItems = megaMenuItems[link.slug] || []
+                    const hasDropdown = dropdownItems.length > 0
+
+                    return (
+                      <motion.div
+                        key={link.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        {hasDropdown ? (
+                          <div className="flex flex-col">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setOpenMobileMenu(
+                                  openMobileMenu === link.id ? null : link.id
+                                )
+                              }
+                              className={`w-full text-left px-4 py-3 text-sm font-semibold uppercase tracking-wide rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
+                                isActive(link.slug)
+                                  ? 'text-primary-600 bg-primary-50'
+                                  : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                              }`}
+                            >
+                              {link.name}
+                            </button>
+                            <AnimatePresence>
+                              {openMobileMenu === link.id && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="px-4 py-2 bg-primary-50 rounded-md ml-4 mt-1 space-y-1">
+                                    {dropdownItems.map((item, itemIndex) => (
+                                      <motion.div
+                                        key={item.id}
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{
+                                          delay: itemIndex * 0.03,
+                                          duration: 0.2,
+                                        }}
+                                      >
+                                        <Link
+                                          to={item.slug}
+                                          className="block px-3 py-2 text-sm text-primary-800 hover:text-primary-600 hover:bg-primary-100 rounded-md transition-colors"
+                                          onClick={() => {
+                                            setIsMenuOpen(false)
+                                            setOpenMobileMenu(null)
+                                          }}
+                                        >
+                                          {item.name}
+                                        </Link>
+                                      </motion.div>
+                                    ))}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        ) : (
+                          <Link
+                            to={`/${link.slug}`}
+                            className={`block px-4 py-3 text-sm font-semibold uppercase tracking-wide rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
+                              isActive(link.slug)
+                                ? 'text-primary-600 bg-primary-50'
+                                : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                            }`}
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            {link.name}
+                          </Link>
+                        )}
+                      </motion.div>
+                    )
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </nav>
+    </motion.nav>
   )
 }
 
 export default Navigation
-

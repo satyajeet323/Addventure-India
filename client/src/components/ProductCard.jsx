@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Star, ShoppingCart } from 'lucide-react'
 
 function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false)
+  const [imageError, setImageError] = useState(false)
+  const navigate = useNavigate()
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-IN', {
@@ -33,6 +36,8 @@ function ProductCard({ product }) {
     setTimeout(() => {
       ripple.remove()
       setIsAdding(false)
+      // Navigate to cart page
+      navigate('/cart')
     }, 600)
   }
 
@@ -66,22 +71,36 @@ function ProductCard({ product }) {
       className="group bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-soft hover:shadow-strong transition-all duration-300 flex flex-col"
     >
       <div className="relative aspect-square overflow-hidden bg-neutral-100">
-        <motion.img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-cover"
-          loading="lazy"
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.4 }}
-        />
+        {!imageError ? (
+          <motion.img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.4 }}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-primary-100">
+            <span className="text-primary-600 font-semibold text-center px-4">Image not available</span>
+          </div>
+        )}
+        {product.badge && (
+          <div className="absolute top-3 left-3 bg-secondary-500 text-white px-2 py-1 rounded-md text-xs font-semibold">
+            {product.badge}
+          </div>
+        )}
         {product.originalPrice && (
-          <div className="absolute top-3 left-3 bg-primary-600 text-white px-2 py-1 rounded-md text-xs font-semibold">
+          <div className={`absolute top-3 ${product.badge ? 'right-3' : 'left-3'} bg-primary-600 text-white px-2 py-1 rounded-md text-xs font-semibold`}>
             {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
           </div>
         )}
         {!product.inStock && (
           <div className="absolute inset-0 bg-neutral-900/60 flex items-center justify-center backdrop-blur-sm">
-            <span className="text-white font-semibold text-lg">Out of Stock</span>
+            <span className="text-white font-semibold text-lg">
+              {product.availability || 'Out of Stock'}
+            </span>
           </div>
         )}
       </div>

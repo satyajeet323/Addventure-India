@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { navLinks, megaMenuItems } from '../config/data'
 import MegaMenu from './MegaMenu'
+import logo from '../assets/add.png'
 
 function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -28,23 +29,30 @@ function Navigation() {
       transition={{ duration: 0.3 }}
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/80 backdrop-blur-md shadow-lg border-b border-primary-200'
+          ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-primary-200'
           : 'bg-white border-b border-primary-100'
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="flex items-center justify-between h-16 lg:h-18 xl:h-20">
           {/* Logo */}
           <Link
             to="/"
-            className="flex-shrink-0 flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md group"
+            className="flex-shrink-0 flex items-center space-x-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md group"
             aria-label="Adventure India Home"
           >
-           
+            <img 
+              src={logo} 
+              alt="Adventure India Logo" 
+              className="h-8 lg:h-10 w-auto object-contain transition-transform group-hover:scale-105"
+            />
+            <span className="hidden sm:block text-lg lg:text-xl font-display font-bold text-primary-800">
+              Add-Venture India
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden xl:flex xl:items-center xl:space-x-1 relative z-50">
+          <div className="hidden lg:flex lg:items-center lg:space-x-0.5 xl:space-x-1 relative z-50">
             {navLinks.map((link, index) => {
               const dropdownItems = megaMenuItems[link.slug] || []
               return (
@@ -69,7 +77,7 @@ function Navigation() {
           {/* Mobile menu button */}
           <button
             type="button"
-            className="xl:hidden p-2 rounded-md text-neutral-700 hover:text-primary-600 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200"
+            className="lg:hidden p-2 rounded-md text-neutral-700 hover:text-primary-600 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200"
             aria-label="Toggle menu"
             aria-expanded={isMenuOpen}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -90,9 +98,9 @@ function Navigation() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="xl:hidden overflow-hidden"
+              className="lg:hidden overflow-hidden bg-white border-t border-primary-100"
             >
-              <div className="py-4 border-t border-primary-200">
+              <div className="py-4">
                 <div className="flex flex-col space-y-1">
                   {navLinks.map((link, index) => {
                     const dropdownItems = megaMenuItems[link.slug] || []

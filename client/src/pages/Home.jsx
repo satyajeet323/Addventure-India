@@ -1,6 +1,7 @@
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, MapPin, Calendar, Star, Shield, Truck, Headphones, Award } from 'lucide-react'
+import { ArrowRight, MapPin, Calendar, Star, Shield, Truck, Headphones, Award, ChevronLeft, ChevronRight } from 'lucide-react'
 import SEO from '../components/SEO'
 import ProductCard from '../components/ProductCard'
 import {
@@ -10,6 +11,7 @@ import {
   whyChooseUs,
   blogPosts,
   siteConfig,
+  cyclingToursCarousel,
 } from '../config/data'
 
 const iconMap = {
@@ -20,6 +22,47 @@ const iconMap = {
 }
 
 function Home() {
+  const [scrollPosition, setScrollPosition] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+  const carouselTrackRef = useRef(null)
+  const slideWidth = 350 + 32 // 350px width + 32px gap (2rem)
+
+  // Auto-scroll effect
+  useEffect(() => {
+    if (isPaused) return
+
+    const interval = setInterval(() => {
+      setScrollPosition((prev) => {
+        const maxScroll = cyclingToursCarousel.length * slideWidth
+        const newPosition = prev + 1
+        // Reset when we've scrolled through one set of items
+        return newPosition >= maxScroll ? 0 : newPosition
+      })
+    }, 30) // Smooth scrolling every 30ms
+
+    return () => clearInterval(interval)
+  }, [isPaused, slideWidth])
+
+  const handlePrev = () => {
+    setIsPaused(true)
+    setScrollPosition((prev) => {
+      const maxScroll = cyclingToursCarousel.length * slideWidth
+      const newPosition = prev - slideWidth * 2 // Move 2 slides at a time for faster navigation
+      return newPosition < 0 ? maxScroll - slideWidth : newPosition
+    })
+    setTimeout(() => setIsPaused(false), 3000) // Resume auto-scroll after 3 seconds
+  }
+
+  const handleNext = () => {
+    setIsPaused(true)
+    setScrollPosition((prev) => {
+      const maxScroll = cyclingToursCarousel.length * slideWidth
+      const newPosition = prev + slideWidth * 2 // Move 2 slides at a time for faster navigation
+      return newPosition >= maxScroll ? 0 : newPosition
+    })
+    setTimeout(() => setIsPaused(false), 3000) // Resume auto-scroll after 3 seconds
+  }
+
   return (
     <>
       <SEO
@@ -30,13 +73,14 @@ function Home() {
       />
 
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
-        </div>
+      <section 
+        className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`
+        }}
+      >
+        {/* Dark Overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/80 via-primary-800/75 to-primary-900/80"></div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
@@ -111,6 +155,110 @@ function Home() {
             />
           </motion.div>
         </motion.div>
+      </section>
+
+      {/* Upcoming Adventure Programs Carousel */}
+      <section className="py-16 lg:py-20 bg-neutral-50" aria-labelledby="upcoming-programs-heading">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 id="upcoming-programs-heading" className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-primary-900 mb-4">
+              Upcoming Adventure Programs
+            </h2>
+          </motion.div>
+          
+          <div 
+            className="relative overflow-hidden"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            {/* Left Arrow Button */}
+            <button
+              onClick={handlePrev}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-primary-900 p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+
+            {/* Right Arrow Button */}
+            <button
+              onClick={handleNext}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-primary-900 p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+
+            <div className="carousel-container">
+              <div 
+                ref={carouselTrackRef}
+                className="carousel-track carousel-track-controlled"
+                style={{
+                  transform: `translateX(-${scrollPosition}px)`,
+                  transition: isPaused ? 'transform 0.5s ease-out' : 'none',
+                }}
+              >
+                {[...cyclingToursCarousel, ...cyclingToursCarousel].map((tour, index) => (
+                  <motion.div
+                    key={`${tour.id}-${index}`}
+                    className="carousel-slide"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                  >
+                    <Link
+                      to={tour.slug}
+                      className="group relative block w-[350px] h-[500px] rounded-2xl overflow-hidden shadow-strong hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                    >
+                      <div className="relative w-full h-full">
+                        <img
+                          src={tour.image}
+                          alt={tour.title}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/90 via-neutral-900/50 to-transparent" />
+                        
+                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                          <h3 className="text-3xl font-display font-bold mb-2 group-hover:text-primary-300 transition-colors">
+                            {tour.title}
+                          </h3>
+                          {tour.subtitle && (
+                            <p className="text-xl text-primary-200 mb-4">
+                              {tour.subtitle}
+                            </p>
+                          )}
+                          <p className="text-base text-neutral-200 mb-4 font-medium">
+                            {tour.date}
+                          </p>
+                          
+                          {tour.details && (
+                            <div className="mt-4 space-y-2">
+                              <ul className="text-sm text-neutral-200 space-y-1">
+                                {tour.details.slice(0, 4).map((detail, idx) => (
+                                  <li key={idx} className="flex items-start gap-2">
+                                    <span className="text-primary-400 mt-1">•</span>
+                                    <span>{detail}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Featured Categories Section */}

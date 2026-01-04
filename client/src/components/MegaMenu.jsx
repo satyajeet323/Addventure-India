@@ -118,7 +118,7 @@ function MegaMenu({ items, label, slug, isMobile = false }) {
         type="button"
         ref={triggerRef}
         onClick={handleToggle}
-        className="relative px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md group flex items-center gap-1"
+        className="relative px-3 py-2 text-sm font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md group flex items-center gap-1"
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-controls={`mega-menu-${slug}`}
@@ -163,35 +163,31 @@ function MegaMenu({ items, label, slug, isMobile = false }) {
               className={`fixed left-0 right-0 ${
                 isMobile ? 'z-50' : 'z-[60]'
               }`}
-              style={{ top: `${navbarHeight + 8}px` }}
+              style={{ top: `${navbarHeight}px` }}
               role="menu"
               aria-label={`${label} submenu`}
               onMouseEnter={handleDropdownMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
               <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="bg-primary-50 rounded-2xl shadow-strong border border-primary-200 p-6 lg:p-8 min-h-[300px] max-h-[350px] overflow-y-auto">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="bg-primary-50 rounded-b-xl shadow-xl border-x border-b border-primary-200 py-4 lg:py-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
                     {items.map((item, index) => (
                       <motion.div
                         key={item.id || index}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.03, duration: 0.2 }}
+                        transition={{ delay: index * 0.02, duration: 0.2 }}
                       >
                         <Link
                           to={item.slug || `/${slug}/${item.id}`}
-                          className="block w-full p-4 rounded-xl bg-primary-100 hover:bg-primary-600 text-primary-800 hover:text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-primary-50 transform hover:scale-105"
+                          className="block w-full p-3 lg:p-4 rounded-lg bg-primary-100 hover:bg-primary-600 text-primary-800 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-primary-50"
                           role="menuitem"
                           onClick={() => setIsOpen(false)}
                         >
-                          <motion.span
-                            className="block text-sm font-semibold text-center"
-                            whileHover={{ scale: 1.02 }}
-                            transition={{ duration: 0.2 }}
-                          >
+                          <span className="block text-sm font-semibold text-center">
                             {item.name}
-                          </motion.span>
+                          </span>
                         </Link>
                       </motion.div>
                     ))}
